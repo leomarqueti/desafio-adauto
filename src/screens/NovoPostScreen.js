@@ -5,7 +5,7 @@ import { buscarPosts, buscarUsuario, salvarPosts } from '../storage/devgramStora
 
 export default function NovoPostScreen({ navigation }) {
   const [texto, setTexto] = useState('');
-
+  const POST_MAXSIZE = 300;
   async function publicar() {
     try{
       if (!texto.trim()) {
@@ -26,7 +26,7 @@ export default function NovoPostScreen({ navigation }) {
       const novoPost = {
         id: Date.now(),
         usuario: usuario.nome,
-        texto,
+        texto: texto.trim(),
         likes: 0,
         comentarios: [],
         criadoEm: new Date().toISOString(),
@@ -56,7 +56,10 @@ export default function NovoPostScreen({ navigation }) {
         value={texto}
         onChangeText={setTexto}
         multiline
+        maxLength={POST_MAXSIZE}
       />
+
+      <Text style={styles.textContador}>{texto.length}/{POST_MAXSIZE}</Text>
 
       <Botao titulo="Publicar" onPress={publicar} />
     </View>
@@ -83,5 +86,10 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 16,
     marginBottom: 14,
+  },
+  textContador: {
+    textAlign: 'right',
+    marginBottom: 14,
+    fontWeight: 'bold',
   },
 });
