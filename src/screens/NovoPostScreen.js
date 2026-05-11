@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Keyboard } from 'react-native';
 import Botao from '../components/Botao';
 import { buscarPosts, buscarUsuario, salvarPosts } from '../storage/devgramStorage';
 
@@ -36,7 +36,8 @@ export default function NovoPostScreen({ navigation }) {
 
       await salvarPosts(novosPosts);
 
-      Alert.alert('Sucesso', 'Post publicado!');
+      Keyboard.dismiss();
+      Alert.alert('Post publicado!');
       setTexto('');
       navigation.navigate('Feed');
     } catch(erro){
