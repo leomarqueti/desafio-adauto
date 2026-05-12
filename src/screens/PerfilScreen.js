@@ -10,11 +10,15 @@ export default function PerfilScreen() {
   useFocusEffect(
     useCallback(() => {
       async function carregar() {
-        const usuarioStorage = await buscarUsuario();
-        const postsStorage = await buscarPosts();
+        try{
+          const usuarioStorage = await buscarUsuario();
+          const postsStorage = await buscarPosts();
 
-        setUsuario(usuarioStorage);
-        setPosts(postsStorage);
+          setUsuario(usuarioStorage);
+          setPosts(postsStorage);
+        } catch(erro){
+          console.log(erro)
+        }  
       }
 
       carregar();

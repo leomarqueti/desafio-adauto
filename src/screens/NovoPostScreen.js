@@ -1,43 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Keyboard } from 'react-native';
 import Botao from '../components/Botao';
 import { buscarPosts, buscarUsuario, salvarPosts } from '../storage/devgramStorage';
 
 export default function NovoPostScreen({ navigation }) {
   const [texto, setTexto] = useState('');
-
+  const POST_MAXSIZE = 300;
   async function publicar() {
-    if (!texto.trim()) {
-      Alert.alert('Atenção', 'Digite algo para publicar.');
-      return;
-    }
+    try{
+      if (!texto.trim()) {
+        Alert.alert('Atenção', 'Digite algo para publicar.');
+        return;
+      }
 
-    const usuario = await buscarUsuario();
+      const usuario = await buscarUsuario();
 
-    if (!usuario) {
-      Alert.alert('Erro', 'Usuário não encontrado.');
-      navigation.replace('Login');
-      return;
-    }
+      if (!usuario) {
+        Alert.alert('Erro', 'Usuário não encontrado.');
+        navigation.replace('Login');
+        return;
+      }
 
-    const postsAtuais = await buscarPosts();
+      const postsAtuais = await buscarPosts();
 
-    const novoPost = {
-      id: Date.now(),
-      usuario: usuario.nome,
-      texto,
-      likes: 0,
-      comentarios: [],
-      criadoEm: new Date().toISOString(),
-    };
+      const novoPost = {
+        id: Date.now(),
+        usuario: usuario.nome,
+        texto: texto.trim(),
+        likes: 0,
+        comentarios: [],
+        criadoEm: new Date().toISOString(),
+      };
 
-    const novosPosts = [...postsAtuais, novoPost];
+      const novosPosts = [...postsAtuais, novoPost];
 
-    await salvarPosts(novosPosts);
+      await salvarPosts(novosPosts);
 
-    Alert.alert('Sucesso', 'Post publicado!');
-    setTexto('');
-    navigation.navigate('Feed');
+      Keyboard.dismiss();
+      Alert.alert('Post publicado!');
+      setTexto('');
+      navigation.navigate('Feed');
+    } catch(erro){
+      console.error(erro)
+      Alert.alert('Ops..','Não foi possivel publicar D;')
+    } 
   }
 
   return (
@@ -50,7 +56,10 @@ export default function NovoPostScreen({ navigation }) {
         value={texto}
         onChangeText={setTexto}
         multiline
+        maxLength={POST_MAXSIZE}
       />
+
+      <Text style={styles.textContador}>{texto.length}/{POST_MAXSIZE}</Text>
 
       <Botao titulo="Publicar" onPress={publicar} />
     </View>
@@ -77,5 +86,10 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 16,
     marginBottom: 14,
+  },
+  textContador: {
+    textAlign: 'right',
+    marginBottom: 14,
+    fontWeight: 'bold',
   },
 });
