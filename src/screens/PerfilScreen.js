@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { buscarPosts, buscarUsuario } from '../storage/devgramStorage';
+import { buscarPosts, buscarUsuarioLogado } from '../storage/devgramStorage';
 
 export default function PerfilScreen() {
   const [usuario, setUsuario] = useState(null);
@@ -10,15 +10,15 @@ export default function PerfilScreen() {
   useFocusEffect(
     useCallback(() => {
       async function carregar() {
-        try{
-          const usuarioStorage = await buscarUsuario();
+        try {
+          const usuarioStorage = await buscarUsuarioLogado();
           const postsStorage = await buscarPosts();
 
           setUsuario(usuarioStorage);
           setPosts(postsStorage);
-        } catch(erro){
+        } catch(erro) {
           console.log(erro)
-        }  
+        }
       }
 
       carregar();

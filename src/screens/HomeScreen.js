@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import Botao from '../components/Botao';
-import { buscarUsuario, limparTudo } from '../storage/devgramStorage';
+import { buscarUsuarioLogado, logout } from '../storage/devgramStorage';
 
 export default function HomeScreen({ navigation }) {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     async function carregar() {
-      const dados = await buscarUsuario();
+      const dados = await buscarUsuarioLogado();
       setUsuario(dados);
     }
-
     carregar();
   }, []);
 
   async function sair() {
-    await limparTudo();
-    Alert.alert('Pronto', 'Dados apagados do aparelho.');
-    navigation.replace('Login');
+    Alert.alert(
+      'Sair',
+      'Deseja sair da sua conta?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            navigation.replace('Welcome');
+          },
+        },
+      ]
+    );
   }
 
   return (
@@ -27,16 +38,21 @@ export default function HomeScreen({ navigation }) {
 
       {usuario && (
         <View style={styles.card}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarLetra}>
+              {usuario.nome.charAt(0).toUpperCase()}
+            </Text>
+          </View>
           <Text style={styles.nome}>{usuario.nome}</Text>
           <Text style={styles.info}>Turma: {usuario.turma}</Text>
-          <Text style={styles.bio}>{usuario.bio}</Text>
+          {usuario.bio ? <Text style={styles.bio}>{usuario.bio}</Text> : null}
         </View>
       )}
 
-      <Botao titulo="Ver Feed" onPress={() => navigation.navigate('Feed')} />
-      <Botao titulo="Criar Novo Post" onPress={() => navigation.navigate('NovoPost')} />
-      <Botao titulo="Meu Perfil" onPress={() => navigation.navigate('Perfil')} />
-      <Botao titulo="Sair e Limpar Dados" variante="perigo" onPress={sair} />
+      <Botao titulo="📰  Ver Feed" onPress={() => navigation.navigate('Feed')} />
+      <Botao titulo="✏️  Criar Novo Post" onPress={() => navigation.navigate('NovoPost')} />
+      <Botao titulo="👤  Meu Perfil" onPress={() => navigation.navigate('Perfil')} />
+      <Botao titulo="Sair da conta" variante="perigo" onPress={sair} />
     </View>
   );
 }
@@ -46,32 +62,54 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 22,
     backgroundColor: '#F3F4F6',
+    gap: 12,
   },
   titulo: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#111827',
-    marginBottom: 20,
+    marginBottom: 8,
   },
   card: {
     backgroundColor: '#fff',
-    padding: 18,
-    borderRadius: 16,
-    marginBottom: 20,
-    elevation: 2,
+    padding: 20,
+    borderRadius: 20,
+    marginBottom: 8,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#7C3AED',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  avatarLetra: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   nome: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#7C3AED',
+    color: '#111827',
   },
   info: {
-    fontSize: 16,
-    color: '#4B5563',
-    marginTop: 6,
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 4,
   },
   bio: {
     marginTop: 10,
-    color: '#111827',
+    color: '#4B5563',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import PostCard from '../components/PostCard';
 import Botao from '../components/Botao';
-import { buscarPosts, buscarUsuario, salvarPosts } from '../storage/devgramStorage';
+import { buscarPosts, buscarUsuarioLogado, salvarPosts } from '../storage/devgramStorage';
 
 export default function FeedScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
@@ -13,7 +13,7 @@ export default function FeedScreen({ navigation }) {
     useCallback(() => {
       async function carregar() {
         const postsStorage = await buscarPosts();
-        const usuarioStorage = await buscarUsuario();
+        const usuarioStorage = await buscarUsuarioLogado();
 
         setPosts(postsStorage);
         setUsuario(usuarioStorage);
@@ -25,19 +25,21 @@ export default function FeedScreen({ navigation }) {
 
   async function curtirPost(id) {
     const novosPosts = posts.map((post) => {
-      if (post.liked) {
-        return {
-          ...post,
-          likes: post.likes - 1,
-          liked: false,
-        };
+      if (post.id === id) {
+        if (post.liked) {
+          return {
+            ...post,
+            likes: post.likes - 1,
+            liked: false,
+          };
+        } else {
+          return {
+            ...post,
+            likes: post.likes + 1,
+            liked: true,
+          };
+        }
       }
-
-       return {
-        ...post,
-        likes: post.likes + 1,
-        liked: true,
-      };
       return post;
     });
 

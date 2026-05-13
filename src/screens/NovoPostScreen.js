@@ -10,13 +10,14 @@ import {
 import Botao from "../components/Botao";
 import {
   buscarPosts,
-  buscarUsuario,
+  buscarUsuarioLogado,
   salvarPosts,
 } from "../storage/devgramStorage";
 
 export default function NovoPostScreen({ navigation }) {
   const [texto, setTexto] = useState("");
   const POST_MAXSIZE = 300;
+
   async function publicar() {
     try {
       if (!texto.trim()) {
@@ -24,11 +25,11 @@ export default function NovoPostScreen({ navigation }) {
         return;
       }
 
-      const usuario = await buscarUsuario();
+      const usuario = await buscarUsuarioLogado();
 
       if (!usuario) {
         Alert.alert("Erro", "Usuário não encontrado.");
-        navigation.replace("Login");
+        navigation.replace("Welcome");
         return;
       }
 
