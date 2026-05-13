@@ -25,13 +25,19 @@ export default function FeedScreen({ navigation }) {
 
   async function curtirPost(id) {
     const novosPosts = posts.map((post) => {
-      if (post.id === id) {
+      if (post.liked) {
         return {
           ...post,
-          likes: post.likes + 1,
+          likes: post.likes - 1,
+          liked: false,
         };
       }
 
+       return {
+        ...post,
+        likes: post.likes + 1,
+        liked: true,
+      };
       return post;
     });
 
