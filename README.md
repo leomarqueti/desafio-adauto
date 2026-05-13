@@ -1,5 +1,8 @@
 # DevGram — Rede Social da Sala
 
+<img width="262" height="577" alt="image" src="https://github.com/user-attachments/assets/a3fc2514-3734-4790-bd15-6df750407d53" />
+
+
 Projeto base em React Native com Expo para uma atividade em grupo.
 
 ## Como rodar
